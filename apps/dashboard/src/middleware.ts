@@ -10,6 +10,8 @@ const I18nMiddleware = createI18nMiddleware({
 });
 
 export async function middleware(request: NextRequest) {
+  console.log("[MIDDLEWARE] Path:", request.nextUrl.pathname);
+
   // @ts-ignore-error - NextRequest type with current bun version is not compatible with NextResponse type
   const response = await updateSession(request, I18nMiddleware(request));
   const supabase = await createClient();
@@ -34,6 +36,12 @@ export async function middleware(request: NextRequest) {
     data: { session },
   } = await supabase.auth.getSession();
 
+  console.log("[MIDDLEWARE] Session check:", {
+    hasSession: !!session,
+    userId: session?.user?.id,
+    pathname: newUrl.pathname
+  });
+
   // 1. Not authenticated
   if (
     !session &&
@@ -45,6 +53,7 @@ export async function middleware(request: NextRequest) {
     !newUrl.pathname.includes("/all-done") &&
     !newUrl.pathname.includes("/desktop/search")
   ) {
+    console.log("[MIDDLEWARE] No session, redirecting to login");
     const url = new URL("/login", request.url);
 
     if (encodedSearchParams) {
