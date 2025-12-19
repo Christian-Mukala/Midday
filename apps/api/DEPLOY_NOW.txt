@@ -1,0 +1,58 @@
+═══════════════════════════════════════════════════════════════════
+                    MIDDAY API - DEPLOY NOW
+═══════════════════════════════════════════════════════════════════
+
+🚀 QUICK DEPLOY (Copy and paste these commands):
+
+cd /mnt/c/Users/Owner/Documents/midday
+fly deploy --config apps/api/fly.toml --app midday-api-christian
+
+───────────────────────────────────────────────────────────────────
+
+✅ VERIFY DEPLOYMENT:
+
+curl https://midday-api-christian.fly.dev/health
+fly status --app midday-api-christian
+fly logs --app midday-api-christian
+
+───────────────────────────────────────────────────────────────────
+
+📊 USEFUL URLS:
+
+Health Check:  https://midday-api-christian.fly.dev/health
+API Docs:      https://midday-api-christian.fly.dev/
+Dashboard:     https://fly.io/apps/midday-api-christian
+Metrics:       https://fly.io/apps/midday-api-christian/metrics
+
+───────────────────────────────────────────────────────────────────
+
+🔧 COMMON OPERATIONS:
+
+View logs:     fly logs --app midday-api-christian
+Restart:       fly machines restart --app midday-api-christian
+Scale up:      fly scale count 2 --app midday-api-christian
+More memory:   fly scale memory 2048 --app midday-api-christian
+Rollback:      fly releases rollback --app midday-api-christian
+SSH:           fly ssh console --app midday-api-christian
+
+───────────────────────────────────────────────────────────────────
+
+📚 DOCUMENTATION:
+
+README_DEPLOYMENT.md  - Start here (complete overview)
+QUICKSTART.md         - 5-minute deployment guide
+DEPLOYMENT.md         - Full deployment documentation
+FLY_COMMANDS.md       - Command reference
+ARCHITECTURE.md       - Technical architecture
+DEPLOYMENT_SOLUTION.md - Problem & solution details
+
+───────────────────────────────────────────────────────────────────
+
+🐛 TROUBLESHOOTING:
+
+Build fails?       Check you're in /mnt/c/Users/Owner/Documents/midday
+App won't start?   fly secrets list --app midday-api-christian
+Health failing?    fly logs --app midday-api-christian
+Need help?         See DEPLOYMENT.md troubleshooting section
+
+═══════════════════════════════════════════════════════════════════

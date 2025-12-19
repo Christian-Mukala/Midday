@@ -5,19 +5,19 @@ FROM oven/bun:1.2.22 AS base
 FROM base AS turbo-cli
 RUN bun add -g turbo
 
-# Builder stage
+# Builder stage - prune API workspace
 FROM turbo-cli AS builder
 WORKDIR /app
-# Copy all files
+# Copy all files needed for turbo prune
 COPY . .
-# Use turbo CLI from Bun global install to prune workspaces
-RUN turbo prune @midday/api --docker
+# Prune API workspace - this creates a minimal monorepo with only API dependencies
+RUN turbo prune @midday/api --docker --out-dir=out/api
 
 # Installer stage
 FROM base AS installer
 WORKDIR /app
 
-# Install build dependencies for native modules (canvas, etc.)
+# Install build dependencies for native modules (pg, canvas, etc.)
 RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
@@ -29,18 +29,19 @@ RUN apt-get update && apt-get install -y \
     librsvg2-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# First install the dependencies (as they change less often)
-COPY --from=builder /app/out/json/ .
-# Don't copy the lockfile, allow Bun to generate a fresh one
+# Copy package.json files from API pruned workspace
+COPY --from=builder /app/out/api/json/ .
+
+# Copy full source from API pruned workspace (includes all workspace deps)
+COPY --from=builder /app/out/api/full/ .
+
+# Install dependencies (allow lockfile updates for malformed entries)
 RUN bun install
 
-# Copy the full source code
-COPY --from=builder /app/out/full/ .
+# Build engine if needed (it exports types that API may need)
+RUN cd apps/engine && bun run build || true
 
-# Copy the prebuilt engine dist from the build context (assumes CI built it)
-COPY apps/engine/dist /app/apps/engine/dist
-
-# Runner stage (same as installer to avoid another copy)
+# Runner stage
 FROM installer AS runner
 
 # Set the API directory as working directory
@@ -48,9 +49,14 @@ WORKDIR /app/apps/api
 
 # Set environment variables
 ENV NODE_ENV=production
+ENV PORT=8080
 
-# Expose the port the API runs on
-EXPOSE 3000
+# Expose API port
+EXPOSE 8080
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+  CMD bun -e "fetch('http://localhost:8080/health').then(r => r.ok ? process.exit(0) : process.exit(1))"
 
 # Run the API directly with Bun
 CMD ["bun", "run", "src/index.ts"]

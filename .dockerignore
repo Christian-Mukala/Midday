@@ -1,0 +1,54 @@
+# Dependencies
+node_modules
+.pnpm-store
+
+# Build outputs
+.next
+.turbo
+dist
+build
+out
+.expo
+.wrangler
+
+# Development
+.git
+.github
+.vscode
+.idea
+
+# Environment and configs
+.env
+.env.*
+!.env.example
+*.local
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+coverage
+.nyc_output
+
+# Misc
+*.md
+!README.md
+LICENSE
+.gitignore
+.editorconfig
+.prettierrc
+.eslintrc
+
+# Keep these for build
+!bun.lock
+!package.json
+!turbo.json
