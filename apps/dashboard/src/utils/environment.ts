@@ -3,7 +3,8 @@ export function getUrl() {
     return process.env.NEXT_PUBLIC_URL;
   }
 
-  if (process.env.VERCEL_TARGET_ENV === "preview") {
+  // Use Vercel's automatic URL for any Vercel deployment
+  if (process.env.VERCEL_URL) {
     return `https://${process.env.VERCEL_URL}`;
   }
 
